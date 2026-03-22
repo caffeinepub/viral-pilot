@@ -4,7 +4,6 @@ import { SiInstagram, SiTiktok, SiX, SiYoutube } from "react-icons/si";
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  const hostname = encodeURIComponent(window.location.hostname);
 
   return (
     <footer className="border-t border-border bg-background">
@@ -170,15 +169,7 @@ export default function Footer() {
 
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            &copy; {year}. Built with ❤️ using{" "}
-            <a
-              href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${hostname}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              caffeine.ai
-            </a>
+            &copy; {year}. Built with ❤️ by Aurex
           </p>
           <div className="flex gap-4 text-xs text-muted-foreground">
             <span className="hover:text-primary transition-colors cursor-pointer">
