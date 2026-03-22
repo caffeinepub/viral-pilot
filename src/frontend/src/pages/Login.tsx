@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { AlertTriangle, Loader2, Shield, Sparkles } from "lucide-react";
+import { Loader2, Shield, Sparkles } from "lucide-react";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
@@ -19,7 +19,7 @@ export default function Login() {
   useEffect(() => {
     if (loginError) {
       toast.error(
-        "Login failed. Please enable popups in your browser and try again.",
+        "Login failed. If a new tab didn't open, please allow popups/new tabs for this site and try again.",
       );
     }
   }, [loginError]);
@@ -66,17 +66,14 @@ export default function Login() {
             )}
           </Button>
 
-          {/* Popup guide info box */}
-          <div className="flex items-start gap-3 text-xs bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4 text-left">
-            <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
-            <div className="text-amber-800 dark:text-amber-300">
-              <p className="font-semibold mb-1">
-                Internet Identity opens in a popup window
-              </p>
+          {/* Mobile/Popup guide info box */}
+          <div className="flex items-start gap-3 text-xs bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mb-4 text-left">
+            <Shield className="h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400 mt-0.5" />
+            <div className="text-blue-800 dark:text-blue-300">
+              <p className="font-semibold mb-1">Internet Identity will open</p>
               <p>
-                If nothing happens: Click the{" "}
-                <strong>popup blocked icon</strong> in your browser address bar,
-                allow popups for this site, then try again.
+                A new tab will open for secure authentication. Please allow it
+                if prompted by your browser.
               </p>
             </div>
           </div>
