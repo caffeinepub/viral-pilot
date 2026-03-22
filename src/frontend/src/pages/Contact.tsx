@@ -1,151 +1,87 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Mail, MapPin, MessageSquare } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { useSubmitContact } from "../hooks/useQueries";
+import { ArrowRight, Clock, Mail, MapPin, MessageSquare } from "lucide-react";
 
 export default function Contact() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const submitContact = useSubmitContact();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-    try {
-      await submitContact.mutateAsync({ name, email, message });
-      toast.success("Message sent! We'll get back to you within 24 hours.");
-      setName("");
-      setEmail("");
-      setMessage("");
-    } catch {
-      toast.error("Failed to send message. Please try again.");
-    }
-  };
-
   return (
     <main className="container py-16">
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 animate-fade-in-up">
         <h1 className="font-display text-5xl font-bold mb-4">
           Get in <span className="gradient-text">Touch</span>
         </h1>
         <p className="text-muted-foreground text-lg max-w-xl mx-auto">
           Have a question, feedback, or partnership idea? We&apos;d love to hear
-          from you.
+          from you. Just send us an email!
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-4xl mx-auto">
-        {/* Contact Info */}
-        <div className="space-y-6">
-          <div className="glass-card rounded-xl p-6">
-            <h2 className="font-display text-xl font-semibold mb-6">
-              Contact Information
-            </h2>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Mail className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Email</p>
-                  <p className="text-sm text-muted-foreground">
-                    support@socialai.app
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <MessageSquare className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Response Time</p>
-                  <p className="text-sm text-muted-foreground">
-                    Within 24 hours
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <MapPin className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Platform</p>
-                  <p className="text-sm text-muted-foreground">
-                    Built on Internet Computer
-                  </p>
-                </div>
-              </div>
+      <div className="max-w-2xl mx-auto space-y-6">
+        {/* Main Email CTA */}
+        <div className="glass-card rounded-2xl p-8 text-center animate-fade-in-up delay-100">
+          <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+            <Mail className="h-8 w-8 text-primary" />
+          </div>
+          <h2 className="font-display text-2xl font-semibold mb-2">
+            Email Us Directly
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            Click the button below to open your email app and send us a message.
+            We reply within 24 hours.
+          </p>
+          <a href="mailto:aurexsupport666@gmail.com?subject=Viral Pilot Support">
+            <Button
+              size="lg"
+              className="shadow-glow transition-all duration-200 hover:scale-105 gap-2"
+            >
+              <Mail className="h-4 w-4" />
+              aurexsupport666@gmail.com
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </a>
+        </div>
+
+        {/* Info Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-fade-in-up delay-200">
+          <div className="glass-card rounded-xl p-5 text-center transition-transform duration-200 hover:-translate-y-1">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3">
+              <Clock className="h-5 w-5 text-primary" />
             </div>
+            <p className="text-sm font-medium">Response Time</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Within 24 hours
+            </p>
+          </div>
+
+          <div className="glass-card rounded-xl p-5 text-center transition-transform duration-200 hover:-translate-y-1">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3">
+              <MessageSquare className="h-5 w-5 text-primary" />
+            </div>
+            <p className="text-sm font-medium">Support</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Free for all users
+            </p>
+          </div>
+
+          <div className="glass-card rounded-xl p-5 text-center transition-transform duration-200 hover:-translate-y-1">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3">
+              <MapPin className="h-5 w-5 text-primary" />
+            </div>
+            <p className="text-sm font-medium">Platform</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Internet Computer
+            </p>
           </div>
         </div>
 
-        {/* Contact Form */}
-        <form
-          onSubmit={handleSubmit}
-          className="glass-card rounded-xl p-6 space-y-5"
-        >
-          <h2 className="font-display text-xl font-semibold mb-2">
-            Send us a Message
-          </h2>
-
-          <div className="space-y-2">
-            <Label htmlFor="contact-name">Name</Label>
-            <Input
-              id="contact-name"
-              data-ocid="contact.name_input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Your full name"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="contact-email">Email</Label>
-            <Input
-              id="contact-email"
-              type="email"
-              data-ocid="contact.email_input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="contact-message">Message</Label>
-            <Textarea
-              id="contact-message"
-              data-ocid="contact.message_textarea"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Tell us how we can help..."
-              rows={5}
-              required
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full shadow-glow"
-            disabled={submitContact.isPending}
-            data-ocid="contact.submit_button"
-          >
-            {submitContact.isPending ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : null}
-            {submitContact.isPending ? "Sending..." : "Send Message"}
-          </Button>
-        </form>
+        {/* FAQ hint */}
+        <div className="glass-card rounded-xl p-5 animate-fade-in-up delay-300">
+          <p className="text-sm text-muted-foreground text-center">
+            Before writing, check if your question is about{" "}
+            <span className="text-primary font-medium">login issues</span>,{" "}
+            <span className="text-primary font-medium">payment/UPI</span>, or{" "}
+            <span className="text-primary font-medium">tool access</span> —
+            these are our most common topics!
+          </p>
+        </div>
       </div>
     </main>
   );

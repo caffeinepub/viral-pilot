@@ -31,7 +31,8 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
-  const { isAuthenticated, login, logout, profile, principal } = useAuth();
+  const { isAuthenticated, login, logout, profile, principal, isAdmin } =
+    useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
@@ -40,15 +41,15 @@ export default function Navbar() {
     : (principal?.slice(0, 2).toUpperCase() ?? "??");
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md transition-all duration-300">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 transition-opacity duration-200 hover:opacity-80"
           data-ocid="nav.home_link"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary transition-transform duration-200 hover:scale-105">
             <Sparkles className="h-4 w-4 text-primary-foreground" />
           </div>
           <span className="font-display text-lg font-bold gradient-text">
@@ -64,8 +65,10 @@ export default function Navbar() {
               to={link.to}
               data-ocid={`nav.${link.label.toLowerCase()}_link`}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
-                pathname === link.to ? "text-primary" : "text-muted-foreground",
+                "text-sm font-medium transition-all duration-200 hover:text-primary relative after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all after:duration-200 hover:after:w-full",
+                pathname === link.to
+                  ? "text-primary after:w-full"
+                  : "text-muted-foreground",
               )}
             >
               {link.label}
@@ -82,7 +85,7 @@ export default function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full"
+                  className="rounded-full transition-transform duration-200 hover:scale-105"
                   data-ocid="nav.user_menu"
                 >
                   <Avatar className="h-8 w-8">
@@ -92,7 +95,10 @@ export default function Navbar() {
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent
+                align="end"
+                className="w-48 animate-scale-in"
+              >
                 <DropdownMenuItem asChild>
                   <Link to="/dashboard" className="flex items-center gap-2">
                     <LayoutDashboard className="h-4 w-4" /> Dashboard
@@ -103,11 +109,13 @@ export default function Navbar() {
                     <Settings className="h-4 w-4" /> Profile Settings
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/admin" className="flex items-center gap-2">
-                    <Shield className="h-4 w-4" /> Admin Panel
-                  </Link>
-                </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin" className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" /> Admin Panel
+                    </Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={logout}
@@ -124,10 +132,16 @@ export default function Navbar() {
                 size="sm"
                 onClick={login}
                 data-ocid="nav.login_button"
+                className="transition-all duration-200"
               >
                 Login
               </Button>
-              <Button size="sm" onClick={login} data-ocid="nav.signup_button">
+              <Button
+                size="sm"
+                onClick={login}
+                data-ocid="nav.signup_button"
+                className="transition-all duration-200 hover:scale-105"
+              >
                 Get Started
               </Button>
             </div>
@@ -137,65 +151,73 @@ export default function Navbar() {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden transition-transform duration-200"
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            {menuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
+            <div
+              className={cn(
+                "transition-all duration-300",
+                menuOpen ? "rotate-90" : "rotate-0",
+              )}
+            >
+              {menuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </div>
           </Button>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-md py-4">
-          <nav className="container flex flex-col gap-3">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setMenuOpen(false)}
-                className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary py-1",
-                  pathname === link.to
-                    ? "text-primary"
-                    : "text-muted-foreground",
-                )}
+      <div
+        className={cn(
+          "md:hidden border-t border-border bg-background/95 backdrop-blur-md overflow-hidden transition-all duration-300 ease-in-out",
+          menuOpen ? "max-h-96 opacity-100 py-4" : "max-h-0 opacity-0 py-0",
+        )}
+      >
+        <nav className="container flex flex-col gap-3">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              onClick={() => setMenuOpen(false)}
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary py-1",
+                pathname === link.to ? "text-primary" : "text-muted-foreground",
+              )}
+            >
+              {link.label}
+            </Link>
+          ))}
+          {!isAuthenticated && (
+            <div className="flex gap-2 pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  login();
+                  setMenuOpen(false);
+                }}
+                className="flex-1"
               >
-                {link.label}
-              </Link>
-            ))}
-            {!isAuthenticated && (
-              <div className="flex gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    login();
-                    setMenuOpen(false);
-                  }}
-                  className="flex-1"
-                >
-                  Login
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    login();
-                    setMenuOpen(false);
-                  }}
-                  className="flex-1"
-                >
-                  Get Started
-                </Button>
-              </div>
-            )}
-          </nav>
-        </div>
-      )}
+                Login
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => {
+                  login();
+                  setMenuOpen(false);
+                }}
+                className="flex-1"
+              >
+                Get Started
+              </Button>
+            </div>
+          )}
+        </nav>
+      </div>
     </header>
   );
 }

@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Check, Loader2, Shield, Sparkles } from "lucide-react";
+import { AlertTriangle, Check, Loader2, Shield, Sparkles } from "lucide-react";
 import { useEffect } from "react";
+import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
 
 const PERKS = [
@@ -12,7 +13,8 @@ const PERKS = [
 ];
 
 export default function Signup() {
-  const { isAuthenticated, isLoading, login } = useAuth();
+  const { isAuthenticated, isLoading, login, loginError, loginStatus } =
+    useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,6 +22,16 @@ export default function Signup() {
       navigate({ to: "/dashboard", replace: true });
     }
   }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (loginError) {
+      toast.error(
+        "Signup failed. Please enable popups in your browser and try again.",
+      );
+    }
+  }, [loginError]);
+
+  const isLoggingIn = loginStatus === "logging-in";
 
   return (
     <main className="min-h-[80vh] flex items-center justify-center">
@@ -54,18 +66,44 @@ export default function Signup() {
             </p>
             <Button
               onClick={login}
-              disabled={isLoading}
+              disabled={isLoading || isLoggingIn}
               size="lg"
               className="w-full shadow-glow mb-4"
               data-ocid="signup.submit_button"
             >
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              {isLoggingIn ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Opening Internet Identity...
+                </>
+              ) : isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Loading...
+                </>
               ) : (
-                <Shield className="h-4 w-4 mr-2" />
+                <>
+                  <Shield className="h-4 w-4 mr-2" />
+                  Continue with Internet Identity
+                </>
               )}
-              Continue with Internet Identity
             </Button>
+
+            {/* Popup guide info box */}
+            <div className="flex items-start gap-3 text-xs bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4 text-left">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+              <div className="text-amber-800 dark:text-amber-300">
+                <p className="font-semibold mb-1">
+                  Internet Identity opens in a popup window
+                </p>
+                <p>
+                  If nothing happens: Click the{" "}
+                  <strong>popup blocked icon</strong> in your browser address
+                  bar, allow popups for this site, then try again.
+                </p>
+              </div>
+            </div>
+
             <div className="flex items-start gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg p-3 mb-6">
               <Shield className="h-4 w-4 shrink-0 text-primary mt-0.5" />
               <span>

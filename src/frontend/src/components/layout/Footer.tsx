@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
+import { Mail, Sparkles } from "lucide-react";
 import { SiInstagram, SiTiktok, SiX, SiYoutube } from "react-icons/si";
 
 export default function Footer() {
@@ -131,6 +131,15 @@ export default function Footer() {
                 >
                   Contact
                 </Link>
+              </li>
+              <li>
+                <a
+                  href="mailto:aurexsupport666@gmail.com"
+                  className="hover:text-primary transition-colors flex items-center gap-1"
+                >
+                  <Mail className="h-3 w-3" />
+                  aurexsupport666@gmail.com
+                </a>
               </li>
             </ul>
           </div>

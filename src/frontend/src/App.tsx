@@ -6,6 +6,7 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
+import { MessageCircle } from "lucide-react";
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
 import ProtectedRoute from "./components/layout/ProtectedRoute";
@@ -23,6 +24,19 @@ import Profile from "./pages/Profile";
 import Signup from "./pages/Signup";
 import Tools from "./pages/Tools";
 
+function HelpButton() {
+  return (
+    <a
+      href="/contact"
+      data-ocid="app.help_button"
+      className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-primary-foreground shadow-glow text-sm font-medium hover:opacity-90 transition-opacity"
+    >
+      <MessageCircle className="h-4 w-4" />
+      Need Help?
+    </a>
+  );
+}
+
 function AppLayout() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -31,6 +45,7 @@ function AppLayout() {
         <Outlet />
       </div>
       <Footer />
+      <HelpButton />
     </div>
   );
 }

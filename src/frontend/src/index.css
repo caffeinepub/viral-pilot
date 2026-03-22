@@ -168,16 +168,22 @@
     );
   }
 
+  /* === Animations === */
+
   .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out forwards;
+    animation: fadeInUp 0.6s ease-out both;
   }
 
   .animate-fade-in {
-    animation: fadeIn 0.5s ease-out forwards;
+    animation: fadeIn 0.5s ease-out both;
   }
 
   .animate-scale-in {
-    animation: scaleIn 0.3s ease-out forwards;
+    animation: scaleIn 0.25s ease-out both;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.4s ease-out both;
   }
 
   .delay-100 {
@@ -219,7 +225,7 @@
   @keyframes scaleIn {
     from {
       opacity: 0;
-      transform: scale(0.95);
+      transform: scale(0.94);
     }
     to {
       opacity: 1;
@@ -227,11 +233,47 @@
     }
   }
 
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
   .hover-lift {
     @apply transition-transform duration-200;
   }
   .hover-lift:hover {
-    transform: translateY(-3px);
+    transform: translateY(-4px);
+  }
+
+  /* Smooth page transitions */
+  .page-enter {
+    animation: fadeInUp 0.5s ease-out both;
+  }
+
+  /* Smooth button press */
+  button,
+  a {
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  /* Card hover glow */
+  .glass-card {
+    transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s
+      ease;
+  }
+  .glass-card:hover {
+    box-shadow: 0 8px 32px oklch(0.55 0.22 290 / 0.12);
+    border-color: oklch(0.55 0.22 290 / 0.3);
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 24px oklch(0.55 0.22 290 / 0.35);
   }
 
   .prose-custom {

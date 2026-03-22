@@ -6,6 +6,8 @@ import {
   ArrowRight,
   BarChart3,
   CheckCircle2,
+  Edit,
+  Rocket,
   Save,
   Shield,
   Sparkles,
@@ -395,6 +397,7 @@ export default function Home() {
   const [demoNiche, setDemoNiche] = useState("");
   const [demoHashtags, setDemoHashtags] = useState<string[]>([]);
   const [demoGenerated, setDemoGenerated] = useState(false);
+  const [showUrgencyBanner, setShowUrgencyBanner] = useState(true);
 
   const previewTools = TOOLS.slice(0, 4);
 
@@ -462,6 +465,28 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Urgency Banner */}
+      {showUrgencyBanner && (
+        <div className="relative bg-gradient-to-r from-primary/90 to-violet-600/90 text-white py-3 px-4 text-center">
+          <p className="text-sm font-semibold">
+            🎉 Limited time: First 1,000 users get Pro features FREE for 30
+            days!{" "}
+            <Link to="/signup" className="underline font-bold hover:opacity-80">
+              Claim Now →
+            </Link>
+          </p>
+          <button
+            type="button"
+            onClick={() => setShowUrgencyBanner(false)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white"
+            data-ocid="home.close_button"
+            aria-label="Dismiss"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Social Proof Ticker */}
       <div className="overflow-hidden border-y border-border/50 bg-muted/20 py-3">
@@ -614,6 +639,63 @@ export default function Home() {
               </div>
               <h3 className="font-display font-semibold mb-2">{f.title}</h3>
               <p className="text-sm text-muted-foreground">{f.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="container py-16">
+        <div className="text-center mb-12">
+          <h2 className="font-display text-4xl font-bold mb-4">
+            How It <span className="gradient-text">Works</span>
+          </h2>
+          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+            Three simple steps to viral content
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto relative">
+          <div className="hidden md:block absolute top-8 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-primary/30 via-primary/60 to-primary/30" />
+          {[
+            {
+              step: 1,
+              icon: Sparkles,
+              title: "Choose a Tool",
+              desc: "Browse 20+ AI tools designed for every platform — Instagram, YouTube, LinkedIn, and more.",
+              color: "text-violet-500",
+              bg: "bg-violet-500/10",
+            },
+            {
+              step: 2,
+              icon: Edit,
+              title: "Enter Your Topic",
+              desc: "Type your niche, topic, or a short description. The more specific, the better the output.",
+              color: "text-blue-500",
+              bg: "bg-blue-500/10",
+            },
+            {
+              step: 3,
+              icon: Rocket,
+              title: "Get Viral Content",
+              desc: "Your AI-generated content is ready in seconds. Copy, save, or refine it instantly.",
+              color: "text-green-500",
+              bg: "bg-green-500/10",
+            },
+          ].map(({ step, icon: Icon, title, desc, color, bg }) => (
+            <div
+              key={step}
+              className="glass-card rounded-2xl p-8 text-center relative"
+            >
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold shadow-glow">
+                {step}
+              </div>
+              <div
+                className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl ${bg} mb-5 mt-2`}
+              >
+                <Icon className={`h-7 w-7 ${color}`} />
+              </div>
+              <h3 className="font-display text-xl font-bold mb-2">{title}</h3>
+              <p className="text-muted-foreground text-sm">{desc}</p>
             </div>
           ))}
         </div>
