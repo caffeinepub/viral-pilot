@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
+  Copy,
   Hash,
   Instagram,
   Lightbulb,
+  Loader2,
   Rocket,
   Zap,
 } from "lucide-react";
@@ -20,15 +22,50 @@ const TOOL_ICONS = {
   "post-ideas": Lightbulb,
 };
 
+const SAMPLE_OUTPUT = {
+  caption:
+    "Every rep counts. Every set matters. Your fitness journey is yours alone — embrace the grind and trust the process. 💪 #FitnessMotivation",
+  hashtags:
+    "#fitness #workout #gym #motivation #fitlife #healthylifestyle #gains #fitnessmotivation #bodygoals #grind",
+};
+
 export default function Home() {
   const [activeTool, setActiveTool] = useState<ToolMeta | null>(null);
+  const [demoInput, setDemoInput] = useState("");
+  const [demoLoading, setDemoLoading] = useState(false);
+  const [demoOutput, setDemoOutput] = useState<typeof SAMPLE_OUTPUT | null>(
+    null,
+  );
+  const [copied, setCopied] = useState(false);
+
+  function handleScrollToDemo() {
+    document
+      .getElementById("demo-section")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  async function handleGenerateSample() {
+    setDemoLoading(true);
+    setDemoOutput(null);
+    await new Promise((r) => setTimeout(r, 800));
+    setDemoOutput(SAMPLE_OUTPUT);
+    setDemoLoading(false);
+  }
+
+  function handleCopy() {
+    if (!demoOutput) return;
+    navigator.clipboard.writeText(
+      `${demoOutput.caption}\n\n${demoOutput.hashtags}`,
+    );
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   return (
     <main>
       {/* Hero */}
-      <section className="relative overflow-hidden min-h-[80vh] flex items-center">
+      <section className="relative overflow-hidden min-h-[90vh] flex items-center">
         <div className="hero-gradient absolute inset-0 pointer-events-none" />
-        {/* Subtle grid pattern */}
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.03]"
           style={{
@@ -47,27 +84,39 @@ export default function Home() {
               AI-Powered Social Media Tools
             </Badge>
             <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-6 animate-fade-in-up">
-              Grow Your Social Media{" "}
+              Grow Your Instagram{" "}
               <span className="gradient-text">Faster with AI</span> 🚀
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in-up delay-100">
-              Generate captions, hashtags, and viral ideas instantly
+            <p className="text-xl md:text-2xl text-muted-foreground mb-4 max-w-2xl mx-auto animate-fade-in-up delay-100">
+              Create viral captions, hashtags, and ideas in seconds
             </p>
-            <div className="animate-fade-in-up delay-200">
+            <p className="text-base text-muted-foreground/70 mb-10 animate-fade-in-up delay-200">
+              ✨ Used by creators worldwide
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up delay-200">
               <Button
                 size="lg"
-                className="text-lg px-10 py-6 shadow-glow rounded-full"
+                className="text-lg px-10 py-6 shadow-glow rounded-full w-full sm:w-auto"
                 asChild
                 data-ocid="hero.primary_button"
               >
                 <Link to="/tools">
-                  Try Now <Zap className="ml-2 h-5 w-5" />
+                  Try Free Now <Zap className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <p className="mt-4 text-sm text-muted-foreground">
-                No login required · Free to use
-              </p>
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-lg px-10 py-6 rounded-full w-full sm:w-auto"
+                onClick={handleScrollToDemo}
+                data-ocid="hero.secondary_button"
+              >
+                See Demo <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </div>
+            <p className="mt-5 text-sm text-muted-foreground animate-fade-in-up delay-300">
+              No login required · 100% Free
+            </p>
           </div>
         </div>
       </section>
@@ -86,6 +135,8 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {TOOLS.map((tool, i) => {
             const Icon = TOOL_ICONS[tool.id as keyof typeof TOOL_ICONS];
+            const displayName =
+              tool.id === "post-ideas" ? "Viral Reel Ideas 🔥" : tool.name;
             return (
               <div
                 key={tool.id}
@@ -108,7 +159,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h3 className="font-display text-xl font-bold mb-2">
-                    {tool.name}
+                    {displayName}
                   </h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {tool.description}
@@ -131,11 +182,164 @@ export default function Home() {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section className="gradient-bg py-20">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl md:text-4xl font-bold mb-3">
+              How it <span className="gradient-text">works</span>
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              From idea to post in under 30 seconds
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {[
+              {
+                step: 1,
+                icon: "📝",
+                title: "Enter topic",
+                desc: "Type your niche or post idea into the tool — e.g. fitness, food, travel.",
+              },
+              {
+                step: 2,
+                icon: "✨",
+                title: "Get AI result",
+                desc: "Our AI instantly generates captions, hashtags, or content ideas tailored to you.",
+              },
+              {
+                step: 3,
+                icon: "🚀",
+                title: "Copy & post",
+                desc: "Copy the result with one click and paste it straight into Instagram.",
+              },
+            ].map(({ step, icon, title, desc }, i) => (
+              <div
+                key={step}
+                className="glass-card rounded-2xl p-7 flex flex-col items-center text-center gap-3 animate-fade-in-up"
+                style={{ animationDelay: `${i * 0.1}s` }}
+                data-ocid={`howto.item.${i + 1}`}
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/15 text-primary font-display font-bold text-lg border border-primary/30">
+                  {step}
+                </div>
+                <span className="text-3xl">{icon}</span>
+                <h3 className="font-display text-lg font-bold">{title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">
+                  {desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Section */}
+      <section id="demo-section" className="container py-20">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="font-display text-3xl md:text-4xl font-bold mb-3">
+              See it <span className="gradient-text">in action</span>
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              Try a sample — no login needed
+            </p>
+          </div>
+          <div
+            className="glass-card rounded-2xl p-8 flex flex-col gap-5"
+            data-ocid="demo.panel"
+          >
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="text"
+                className="flex-1 rounded-xl border border-border bg-background/60 px-4 py-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition"
+                placeholder="Enter your niche (e.g. fitness, food, travel)"
+                value={demoInput}
+                onChange={(e) => setDemoInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleGenerateSample()}
+                data-ocid="demo.input"
+              />
+              <Button
+                onClick={handleGenerateSample}
+                disabled={demoLoading}
+                className="rounded-xl px-6 shadow-glow shrink-0"
+                data-ocid="demo.primary_button"
+              >
+                {demoLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    Generate Sample <Zap className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {demoLoading && (
+              <div
+                className="flex items-center justify-center py-8 text-muted-foreground gap-2"
+                data-ocid="demo.loading_state"
+              >
+                <Loader2 className="h-5 w-5 animate-spin" />
+                <span className="text-sm">AI is crafting your content...</span>
+              </div>
+            )}
+
+            {demoOutput && !demoLoading && (
+              <div
+                className="flex flex-col gap-4 animate-fade-in-up"
+                data-ocid="demo.success_state"
+              >
+                <div className="rounded-xl border border-border bg-muted/30 p-5">
+                  <p className="text-xs font-semibold text-primary mb-2 uppercase tracking-wider">
+                    📸 Caption
+                  </p>
+                  <p className="text-sm leading-relaxed text-foreground">
+                    {demoOutput.caption}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-border bg-muted/30 p-5">
+                  <p className="text-xs font-semibold text-violet-400 mb-2 uppercase tracking-wider">
+                    # Hashtags
+                  </p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {demoOutput.hashtags}
+                  </p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button
+                    variant="outline"
+                    className="flex-1 gap-2"
+                    onClick={handleCopy}
+                    data-ocid="demo.secondary_button"
+                  >
+                    <Copy className="h-4 w-4" />
+                    {copied ? "Copied! ✅" : "Copy All"}
+                  </Button>
+                  <Button
+                    className="flex-1 shadow-glow gap-2"
+                    asChild
+                    data-ocid="demo.submit_button"
+                  >
+                    <Link to="/tools">
+                      Try Now for Real <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Footer CTA Strip */}
       <section className="gradient-bg py-14">
         <div className="container text-center">
           <p className="text-lg md:text-xl font-medium text-foreground/80 mb-6">
-            No login required. Start creating in seconds.
+            Start creating for free — no login required
           </p>
           <Button
             size="lg"
