@@ -1,4 +1,7 @@
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -8,20 +11,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useNavigate } from "@tanstack/react-router";
 import {
   BarChart3,
-  Loader2,
+  Lock,
+  LogOut,
   Mail,
   MessageSquare,
   TrendingUp,
   Users,
   Zap,
 } from "lucide-react";
-import { useEffect } from "react";
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { useActor } from "../hooks/useActor";
 import {
   useAdminContacts,
   useAdminUsers,
@@ -30,43 +30,94 @@ import {
   useTotalUserCount,
 } from "../hooks/useQueries";
 
-export default function Admin() {
-  const { isAuthenticated } = useAuth();
-  const { actor, isFetching } = useActor();
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const navigate = useNavigate();
+const ADMIN_ID = "iasim78666@gmail.com";
+const ADMIN_PASS = "Arooj143666";
+const STORAGE_KEY = "vp_admin_auth";
 
+function AdminLogin({ onLogin }: { onLogin: () => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setTimeout(() => {
+      if (email.trim() === ADMIN_ID && password === ADMIN_PASS) {
+        localStorage.setItem(STORAGE_KEY, "1");
+        onLogin();
+      } else {
+        setError("ID ya password galat hai. Dobara try karo.");
+      }
+      setLoading(false);
+    }, 600);
+  };
+
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-background px-4">
+      <div className="w-full max-w-sm">
+        <div className="glass-card rounded-2xl p-8 shadow-xl">
+          <div className="flex flex-col items-center mb-6">
+            <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mb-3">
+              <Lock className="h-7 w-7 text-primary" />
+            </div>
+            <h1 className="font-display text-2xl font-bold">Admin Login</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Viral Pilot Admin Panel
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="email">Email ID</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="admin@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="username"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+            </div>
+            {error && (
+              <p className="text-sm text-destructive text-center">{error}</p>
+            )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Checking..." : "Login"}
+            </Button>
+          </form>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function AdminDashboard() {
   const { data: users, isLoading: loadingUsers } = useAdminUsers();
   const { data: contacts, isLoading: loadingContacts } = useAdminContacts();
   const { data: platformStats } = usePlatformStats();
   const { data: totalUsers } = useTotalUserCount();
   const { data: usageStats } = useTotalUsageStats();
 
-  useEffect(() => {
-    if (!actor || isFetching || !isAuthenticated) return;
-    actor
-      .isCallerAdmin()
-      .then(setIsAdmin)
-      .catch(() => setIsAdmin(false));
-  }, [actor, isFetching, isAuthenticated]);
-
-  useEffect(() => {
-    if (!isAuthenticated) navigate({ to: "/login", replace: true });
-  }, [isAuthenticated, navigate]);
-
-  useEffect(() => {
-    if (isAdmin === false) navigate({ to: "/dashboard", replace: true });
-  }, [isAdmin, navigate]);
-
-  if (isAdmin === null) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!isAdmin) return null;
+  const handleLogout = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    window.location.reload();
+  };
 
   const maxStat =
     platformStats?.reduce((m, s) => Math.max(m, Number(s.count)), 0) || 1;
@@ -110,14 +161,24 @@ export default function Admin() {
 
   return (
     <main className="container py-12">
-      <h1 className="font-display text-4xl font-bold mb-2">
-        Admin <span className="gradient-text">Panel</span>
-      </h1>
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="font-display text-4xl font-bold">
+          Admin <span className="gradient-text">Panel</span>
+        </h1>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleLogout}
+          className="gap-2"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </Button>
+      </div>
       <p className="text-muted-foreground mb-10">
         Platform overview and management.
       </p>
 
-      {/* Main Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {adminStats.map((s) => (
           <div key={s.label} className="glass-card rounded-xl p-5">
@@ -130,7 +191,6 @@ export default function Admin() {
         ))}
       </div>
 
-      {/* Estimated Revenue + Platform Status */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
         <div className="glass-card rounded-xl p-5">
           <div className="flex items-center gap-2 mb-2">
@@ -159,7 +219,6 @@ export default function Admin() {
         </div>
       </div>
 
-      {/* Revenue Overview */}
       <section className="glass-card rounded-xl p-6 mb-8">
         <h2 className="font-display text-xl font-semibold mb-5">
           Revenue Overview
@@ -221,12 +280,12 @@ export default function Admin() {
       <section className="glass-card rounded-xl p-6 mb-8">
         <h2 className="font-display text-xl font-semibold mb-5">All Users</h2>
         {loadingUsers ? (
-          <div className="space-y-2" data-ocid="admin.loading_state">
+          <div className="space-y-2">
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
           </div>
         ) : (
-          <Table data-ocid="admin.users_table">
+          <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Username</TableHead>
@@ -247,10 +306,7 @@ export default function Admin() {
                 </TableRow>
               )}
               {users?.map((u, i) => (
-                <TableRow
-                  key={u.profile.username || `user-${i}`}
-                  data-ocid={`admin.users_table.row.${i + 1}`}
-                >
+                <TableRow key={u.profile.username || `user-${i}`}>
                   <TableCell>{u.profile.username || "—"}</TableCell>
                   <TableCell>
                     <Badge variant="secondary" className="capitalize">
@@ -276,17 +332,16 @@ export default function Admin() {
             <Skeleton className="h-20 w-full" />
           </div>
         ) : (
-          <div className="space-y-3" data-ocid="admin.contact_list">
+          <div className="space-y-3">
             {contacts?.length === 0 && (
               <p className="text-sm text-muted-foreground text-center py-6">
                 No contact submissions yet.
               </p>
             )}
-            {contacts?.map((c, i) => (
+            {contacts?.map((c) => (
               <div
                 key={`${c.name}-${c.email}`}
                 className="p-4 rounded-lg bg-muted/50"
-                data-ocid={`admin.contact_list.item.${i + 1}`}
               >
                 <div className="flex items-center justify-between mb-1">
                   <p className="font-medium text-sm">{c.name}</p>
@@ -299,7 +354,6 @@ export default function Admin() {
         )}
       </section>
 
-      {/* Admin Support Email */}
       <section className="glass-card rounded-xl p-6">
         <h2 className="font-display text-xl font-semibold mb-3">
           Admin Support
@@ -321,4 +375,16 @@ export default function Admin() {
       </section>
     </main>
   );
+}
+
+export default function Admin() {
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    () => localStorage.getItem(STORAGE_KEY) === "1",
+  );
+
+  if (!isLoggedIn) {
+    return <AdminLogin onLogin={() => setIsLoggedIn(true)} />;
+  }
+
+  return <AdminDashboard />;
 }

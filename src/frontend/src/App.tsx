@@ -120,14 +120,11 @@ const profileRoute = createRoute({
   ),
 });
 
+// Admin has its own login system -- no ProtectedRoute needed
 const adminRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/admin",
-  component: () => (
-    <ProtectedRoute>
-      <Admin />
-    </ProtectedRoute>
-  ),
+  component: Admin,
 });
 
 const routeTree = rootRoute.addChildren([
